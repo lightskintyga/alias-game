@@ -1,0 +1,79 @@
+@import "reset.css";
+
+@font-face {
+    font-family: Montserrat-ExtraBold;
+    src: url("../fonts/MontserratAlternates-ExtraBold.ttf");
+}
+
+@font-face {
+    font-family: Montserrat-Medium;
+    src: url("../fonts/MontserratAlternates-Medium.ttf");
+}
+
+@font-face {
+    font-family: Montserrat-SemiBold;
+    src: url("../fonts/MontserratAlternates-SemiBold.ttf");
+}
+
+body {
+    background-color: #079CD8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu {
+    position: relative;
+    background-color: #FFFFFF;
+    width: 80%;
+    height: 85%;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.menu__header {
+    font-family: Montserrat-ExtraBold;
+    font-size: 40px;
+    padding-top: 72px;
+    padding-bottom: 100px;
+}
+
+.menu__BackBtn {
+    width: 345px;
+    height: 83px;
+    position: absolute;
+    top: 47px;
+    right: 50px;
+    font-family: Montserrat-ExtraBold;
+    font-size: 26px;
+    color: #F79810;
+    border: 5px solid #F79810;
+    border-radius: 12px;
+}
+
+.menu__variants {
+    display: flex;
+    column-gap: 60px;
+}
+
+.menu__variants-editBtn {
+    width: 468px;
+    height: 234px;
+    background-color: #65B2E9;
+    font-family: Montserrat-SemiBold;
+    font-size: 40px;
+    border-radius: 14px;
+    color: #FFFFFF;
+}
+
+.menu__variants-createBtn {
+    width: 468px;
+    height: 234px;
+    background-color: #65B2E9;
+    font-family: Montserrat-SemiBold;
+    font-size: 40px;
+    border-radius: 14px;
+    color: #FFFFFF;
+}

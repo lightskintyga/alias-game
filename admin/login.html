@@ -1,0 +1,26 @@
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="../css/login.css">
+    <script defer src="login.js"></script>
+</head>
+<body>
+<div class="login">
+    <h2 class="login__header">Вход</h2>
+    <button class="login__menuBtn" id="menu">Вернуться в меню</button>
+    <form class="login__form" action="login.php" method="post">
+        <div class="login__info">
+            <p class="login__text-login">Логин:</p>
+            <input name="login" type="text" id="login" required>
+            <p class="login__text-password">Пароль:</p>
+            <input name="password" type="password" id="password" required>
+        </div>
+        <button class="login__btn">Войти</button>
+    </form>
+</div>
+</body>
+</html>

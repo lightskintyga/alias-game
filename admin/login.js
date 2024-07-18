@@ -1,5 +1,5 @@
 const menuBtn = document.getElementById('menu');
 
 menuBtn.addEventListener('click', () => {
-    document.location='../index.html'
+    document.location = '../index.html';
 })

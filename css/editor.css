@@ -25,29 +25,29 @@ body {
 .menu {
     position: relative;
     background-color: #FFFFFF;
-    width: 80%;
-    height: 85%;
+    width: 83%;
+    height: 84%;
     border-radius: 14px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-top: 60px;
 }
 
 .menu__header {
     font-family: Montserrat-ExtraBold;
     font-size: 40px;
-    padding-top: 72px;
-    padding-bottom: 100px;
+    padding-bottom: 194px;
 }
 
 .menu__BackBtn {
-    width: 345px;
-    height: 83px;
+    width: 269px;
+    height: 50px;
     position: absolute;
-    top: 47px;
-    right: 50px;
+    top: 60px;
+    right: 64px;
     font-family: Montserrat-ExtraBold;
-    font-size: 26px;
+    font-size: 20px;
     color: #F79810;
     border: 5px solid #F79810;
     border-radius: 12px;
@@ -55,25 +55,45 @@ body {
 
 .menu__variants {
     display: flex;
-    column-gap: 60px;
+    column-gap: 145px;
 }
 
 .menu__variants-editBtn {
-    width: 468px;
-    height: 234px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 400px;
+    height: 162px;
     background-color: #65B2E9;
     font-family: Montserrat-SemiBold;
-    font-size: 40px;
+    font-size: 30px;
     border-radius: 14px;
     color: #FFFFFF;
+    text-align: left;
 }
 
 .menu__variants-createBtn {
-    width: 468px;
-    height: 234px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 400px;
+    height: 162px;
     background-color: #65B2E9;
     font-family: Montserrat-SemiBold;
-    font-size: 40px;
+    font-size: 30px;
     border-radius: 14px;
     color: #FFFFFF;
+    text-align: left;
+}
+
+.editBtn_text {
+    display: block;
+    width: 310px;
+    height: 81px;
+}
+
+.createBtn_text {
+    display: block;
+    width: 310px;
+    height: 81px;
 }

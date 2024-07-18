@@ -1,0 +1,119 @@
+@import "reset.css";
+
+@font-face {
+    font-family: Montserrat-ExtraBold;
+    src: url("../fonts/MontserratAlternates-ExtraBold.ttf");
+}
+
+@font-face {
+    font-family: Montserrat-Medium;
+    src: url("../fonts/MontserratAlternates-Medium.ttf");
+}
+
+@font-face {
+    font-family: Montserrat-SemiBold;
+    src: url("../fonts/MontserratAlternates-SemiBold.ttf");
+}
+
+body {
+    background-color: #079CD8;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+.creator {
+    position: relative;
+    background-color: #FFFFFF;
+    width: 83%;
+    height: 84%;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    padding-top: 72px;
+    padding-left: 190px;
+}
+
+.creator__header {
+    font-family: Montserrat-ExtraBold;
+    font-size: 40px;
+    padding-bottom: 50px;
+}
+
+.topicTitle__label {
+    font-family: Montserrat-Medium;
+    font-size: 26px;
+    padding-right: 58px;
+}
+
+.words {
+    display: flex;
+    align-items: flex-start;
+}
+
+.words__label {
+    font-family: Montserrat-Medium;
+    font-size: 26px;
+    padding-top: 72px;
+}
+
+.icon__label {
+    font-family: Montserrat-Medium;
+    font-size: 26px;
+}
+
+#topic {
+    font-family: Montserrat-Medium;
+    font-size: 26px;
+    width: 380px;
+    height: 77px;
+    border: 3px solid #00336D;
+    border-radius: 14px;
+    padding-left: 10px;
+}
+
+#words {
+    font-family: Montserrat-Medium;
+    font-size: 26px;
+    width: 721px;
+    height: 181px;
+    border: 3px solid #00336D;
+    border-radius: 14px;
+    margin-top: 52px;
+    margin-left: 68px;
+    padding-left: 10px;
+}
+
+input[type="submit"] {
+    background-color: #F79810;
+}
+
+.submit {
+    display: flex;
+    justify-content: center;
+    padding-top: 58px;
+    padding-right: 190px;
+}
+
+.creator__saveBtn {
+    width: 220px;
+    height: 74px;
+    font-family: Montserrat-ExtraBold;
+    font-size: 26px;
+    color: #FFFFFF;
+    border-radius: 12px;
+}
+
+.creator__backBtn {
+    width: 269px;
+    height: 50px;
+    position: absolute;
+    top: 60px;
+    right: 64px;
+    font-family: Montserrat-ExtraBold;
+    font-size: 20px;
+    color: #F79810;
+    border: 5px solid #F79810;
+    border-radius: 12px;
+}

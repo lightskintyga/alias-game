@@ -69,10 +69,24 @@ $result = $db->query('SELECT topic, image_path FROM topics');
             font-size: 34px;
             color: #FFFFFF;
         }
+
+        .topics__backBtn {
+            position: absolute;
+            top: 40px;
+            right: 82px;
+            width: 263px;
+            height: 56px;
+            font-family: Montserrat-ExtraBold;
+            font-size: 20px;
+            color: #FFFFFF;
+            background-color: #00336D;
+            border-radius: 12px;
+        }
     </style>
 </head>
 <body>
 <div class="topics" id="topics">
+    <button class="topics__backBtn" id="topics__backBtn">Вернуться назад</button>
     <h3 class="topics__header">Выберите тему</h3>
     <div class="topics__row">
     <?php while ($row = $result->fetchArray(SQLITE3_ASSOC)): ?>
@@ -87,10 +101,15 @@ $result = $db->query('SELECT topic, image_path FROM topics');
 </div>
 <script>
     const topicsBlock = document.getElementById('topics');
+    const backBtn = document.getElementById('topics__backBtn');
 
     function startGame(topic) {
         window.location.href = 'game.php?topic=' + encodeURIComponent(topic);
     }
+
+    backBtn.addEventListener('click', () => {
+        document.location = 'index.html';
+    })
 </script>
 </body>
 </html>

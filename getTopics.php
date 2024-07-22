@@ -25,7 +25,8 @@ $result = $db->query('SELECT topic, image_path FROM topics');
         }
 
         body {
-            background-color: #079CD8;
+            background-image: url("img/background.png");
+            background-size: cover;
             display: flex;
             position: relative;
             align-items: center;
@@ -37,6 +38,7 @@ $result = $db->query('SELECT topic, image_path FROM topics');
             flex-direction: column;
             align-items: center;
             background-color: #FFFFFF;
+            position: relative;
             width: 83%;
             height: auto;
             border-radius: 14px;

@@ -16,7 +16,8 @@
 }
 
 body {
-    background-color: #079CD8;
+    background-image: url("../img/background.png");
+    background-size: cover;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -37,7 +38,7 @@ body {
 .login__header {
     font-family: Montserrat-ExtraBold;
     font-size: 40px;
-    padding-bottom: 80px;
+    padding-bottom: 50px;
 }
 
 .login__text-login {

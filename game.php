@@ -6,11 +6,17 @@ $topic = $_GET['topic'];
 if (!isset($_SESSION['used_words'])) {
     $_SESSION['used_words'] = [];
 }
+
 if (!isset($_SESSION['skipped_words'])) {
     $_SESSION['skipped_words'] = [];
 }
+
 if (!isset($counter)) {
     $counter = 0;
+}
+
+if (!isset($_SESSION['current_word'])) {
+    $_SESSION['current_word'] = '';
 }
 
 function getRandomWord($db, $topic) {
@@ -25,7 +31,8 @@ function getRandomWord($db, $topic) {
         $stmt->bindValue($index++, $word, SQLITE3_TEXT);
     }
     $result = $stmt->execute();
-    return $result->fetchArray(SQLITE3_ASSOC)['word'];
+    $row = $result->fetchArray(SQLITE3_ASSOC);
+    return $row ? $row['word'] : false;
 }
 
 $counter++;
@@ -35,11 +42,24 @@ foreach ($_SESSION['skipped_words'] as $key => $skipped_word) {
     }
 }
 
-$randomWord = getRandomWord($db, $topic);
-$_SESSION['used_words'][] = $randomWord;
-
 if (isset($_GET['skip']) && $_GET['skip'] == 'true') {
-    $_SESSION['skipped_words'][] = ['word' => $randomWord, 'turn' => $counter];
+    $_SESSION['skipped_words'][] = ['word' => $_SESSION['current_word'], 'turn' => $counter];
+} else {
+    $_SESSION['used_words'][] = $_SESSION['current_word'];
+}
+
+$randomWord = getRandomWord($db, $topic);
+if ($randomWord) {
+    $_SESSION['current_word'] = $randomWord;
+} else {
+    echo 'Все слова использованы!';
+    session_destroy();
+    exit;
+}
+
+if (isset($_GET['ajax'])) {
+    echo htmlspecialchars($_SESSION['current_word']);
+    exit;
 }
 ?>
 <html lang="ru">
@@ -68,7 +88,8 @@ if (isset($_GET['skip']) && $_GET['skip'] == 'true') {
         }
 
         body {
-            background-color: #079CD8;
+            background-image: url("img/background.png");
+            background-size: cover;
             display: flex;
             position: relative;
             align-items: center;
@@ -102,6 +123,7 @@ if (isset($_GET['skip']) && $_GET['skip'] == 'true') {
             border-radius: 14px;
             align-items: center;
             justify-content: center;
+            box-shadow: 0px 0px 8px 0px rgba(34, 60, 80, 0.2);
         }
 
         .nextWord {
@@ -112,6 +134,7 @@ if (isset($_GET['skip']) && $_GET['skip'] == 'true') {
             background-color: #9CFFB2;
             color: #368F49;
             border-radius: 14px;
+            border: #4AB361 3px solid;
         }
 
         .skipWord {
@@ -122,6 +145,7 @@ if (isset($_GET['skip']) && $_GET['skip'] == 'true') {
             background-color: #FFB7B7;
             color: #FF3737;
             border-radius: 14px;
+            border: #DE6F6F 3px solid;
         }
 
         .startTimer {
@@ -132,6 +156,7 @@ if (isset($_GET['skip']) && $_GET['skip'] == 'true') {
             background-color: #89B1FF;
             color: #1043A5;
             border-radius: 14px;
+            border: #337DD2 3px solid;
         }
 
         .wordsOps {
@@ -158,7 +183,7 @@ if (isset($_GET['skip']) && $_GET['skip'] == 'true') {
 <div class="game" id="game">
     <button class="game__backBtn" id="game__backBtn">Вернуться в меню</button>
     <div class="randomWord">
-        <p class="word"><?php echo htmlspecialchars($randomWord); ?></p>
+        <p class="word" id="currentWord"><?php echo htmlspecialchars($_SESSION['current_word']); ?></p>
     </div>
     <div class="wordsOps">
         <button class="nextWord" onclick="getNextWord()">Следующее</button>
@@ -177,14 +202,14 @@ if (isset($_GET['skip']) && $_GET['skip'] == 'true') {
     })
 
     function getNextWord(skip = false) {
-        let url = 'game.php?topic=<?php echo urlencode($topic); ?>'
+        let url = 'game.php?topic=<?php echo urlencode($topic); ?>&ajax=true'
         if (skip) {
             url += '&skip=true';
         }
         fetch(url)
             .then(response => response.text())
-            .then(html => {
-                document.body.innerHTML = html;
+            .then(word => {
+                document.getElementById('currentWord').innerText = word;
             });
     }
 </script>

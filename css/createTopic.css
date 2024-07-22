@@ -16,7 +16,8 @@
 }
 
 body {
-    background-color: #079CD8;
+    background-image: url("../img/background.png");
+    background-size: cover;
     display: flex;
     position: relative;
     align-items: center;

@@ -81,6 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #F79810;
             border: 5px solid #F79810;
             border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .topics__backBtn:hover {
+            color: #FFFFFF;
+            background-color: #F79810;
         }
 
         #words {
@@ -113,6 +119,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 95px;
         }
 
+        .topics__container {
+            position: relative;
+        }
+
         .topics__saveBtn {
             width: 241px;
             height: 52px;
@@ -122,42 +132,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-color: #F79810;
             border-radius: 14px;
             position: absolute;
+            top: 0;
+            left: 534px;
             opacity: 0.7;
             transition: opacity 0.3s;
+        }
+        
+        .topics__saveBtn:hover {
+            cursor: not-allowed;
         }
 
         .topics__saveBtn.active {
             opacity: 1;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .topics__saveBtn.active:hover {
+            background-color: #EA8111;
+        }
+
+        .topics__deleteBtn {
+            font-family: Montserrat-ExtraBold;
+            font-size: 24px;
+            width: 195px;
+            height: 78px;
+            background-color: #ED6666;
+            color: #FFFFFF;
+            border-radius: 14px;
+            position: absolute;
+            top: -13px;
+            left: 810px;
+            transition: 0.3s;
+        }
+
+        .topics__deleteBtn:hover {
+            background-color: #CF4B4B;
         }
     </style>
 </head>
 <body>
 <div class="topics">
     <h3 class="topics__header">Редактировать темы</h3>
-    <form method="post">
-        <select name="topic" id="topic" class="option__default" onchange="this.form.submit()">
-            <option value="">Выберите тему</option>
-            <?php
-            foreach ($topics as $topic):
+    <div class="topics__container">
+        <form method="post">
+            <select name="topic" id="topic" class="option__default" onchange="this.form.submit()">
+                <option value="">Выберите тему</option>
+                <?php
+                foreach ($topics as $topic):
+                    ?>
+                    <option value="<?= htmlspecialchars($topic) ?>" <?= $selected_topic === $topic ? 'selected' : '' ?>><?= htmlspecialchars($topic) ?></option>
+                <?php
+                endforeach;
+                ?>
+            </select>
+        </form>
+        <?php
+        if ($selected_topic):
             ?>
-            <option value="<?= htmlspecialchars($topic) ?>" <?= $selected_topic === $topic ? 'selected' : '' ?>><?= htmlspecialchars($topic) ?></option>
-            <?php
-            endforeach;
-            ?>
-        </select>
-    </form>
-    <?php
-    if ($selected_topic):
-    ?>
-    <form method="post" action="save_words.php">
-        <input type="hidden" name="topic" value="<?= htmlspecialchars($selected_topic) ?>">
-        <textarea name="words" id="words" class="words__textarea" oninput="handleInput()" onfocus="handleInput()"><?= htmlspecialchars(implode("\n", $words)) ?></textarea>
-        <button type="submit" class="topics__saveBtn" id="topics__saveBtn" disabled>Сохранить</button>
-    </form>
-    <?php
-    endif;
-    ?>
-        <button class="topics__backBtn" id="topics__backBtn">Вернуться назад</button>
+            <form id="saveForm">
+                <input type="hidden" name="topic" value="<?= htmlspecialchars($selected_topic) ?>">
+                <textarea name="words" id="words" class="words__textarea" oninput="handleInput()" onfocus="handleInput()"><?= htmlspecialchars(implode("\n", $words)) ?></textarea>
+                <button type="submit" class="topics__saveBtn" id="topics__saveBtn" disabled onclick="saveWords()">Сохранить</button>
+            </form>
+            <button class="topics__deleteBtn" id="deleteButton" onclick="deleteTopic()">Удалить тему</button>
+        <?php
+        endif;
+        ?>
+    </div>
+    <button class="topics__backBtn" id="topics__backBtn">Вернуться назад</button>
 </div>
 <script>
     const backBtn = document.getElementById('topics__backBtn');
@@ -191,6 +234,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             handleInput();
         }
     })
+
+    function saveWords() {
+        const form = document.getElementById('saveForm');
+        const formData = new FormData(form);
+
+        fetch('save_words.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.text())
+            .then(data => {
+                alert('Изменения выполнены успешно!');
+            })
+            .catch(error => {
+                console.error('Error: ', error);
+            })
+    }
+
+    function deleteTopic() {
+        const form = document.getElementById('saveForm');
+        const formData = new FormData(form);
+
+        fetch('delete_topic.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.text())
+            .then(data => {
+                alert('Тема успешно удалена!');
+                document.location = 'editTopic.php';
+            })
+            .catch(error => {
+                console.error('Error: ', error);
+            })
+    }
 </script>
 </body>
 </html>

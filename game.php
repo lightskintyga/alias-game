@@ -11,8 +11,8 @@ if (!isset($_SESSION['skipped_words'])) {
     $_SESSION['skipped_words'] = [];
 }
 
-if (!isset($counter)) {
-    $counter = 0;
+if (!isset($_SESSION['counter'])) {
+    $_SESSION['counter'] = 0;
 }
 
 if (!isset($_SESSION['current_word'])) {
@@ -35,15 +35,15 @@ function getRandomWord($db, $topic) {
     return $row ? $row['word'] : false;
 }
 
-$counter++;
+$_SESSION['counter']++;
 foreach ($_SESSION['skipped_words'] as $key => $skipped_word) {
-    if ($counter - $skipped_word['turn'] >= rand(5, 10)) {
+    if ($_SESSION['counter'] - $skipped_word['turn'] >= rand(5, 10)) {
         unset($_SESSION['skipped_words'][$key]);
     }
 }
 
 if (isset($_GET['skip']) && $_GET['skip'] == 'true') {
-    $_SESSION['skipped_words'][] = ['word' => $_SESSION['current_word'], 'turn' => $counter];
+    $_SESSION['skipped_words'][] = ['word' => $_SESSION['current_word'], 'turn' => $_SESSION['counter']];
 } else {
     $_SESSION['used_words'][] = $_SESSION['current_word'];
 }
@@ -52,7 +52,7 @@ $randomWord = getRandomWord($db, $topic);
 if ($randomWord) {
     $_SESSION['current_word'] = $randomWord;
 } else {
-    echo 'Все слова использованы!';
+    echo 'Все слова угаданы!';
     session_destroy();
     exit;
 }
@@ -113,6 +113,11 @@ if (isset($_GET['ajax'])) {
             color: #FFFFFF;
             background-color: #00336D;
             border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .game__backBtn:hover {
+            background-color: #2E629E;
         }
 
         .randomWord {
@@ -135,6 +140,12 @@ if (isset($_GET['ajax'])) {
             color: #368F49;
             border-radius: 14px;
             border: #4AB361 3px solid;
+            transition: 0.3s;
+        }
+        
+        .nextWord:hover {
+            color: #226F33;
+            background-color: #75E48D;
         }
 
         .skipWord {
@@ -146,6 +157,12 @@ if (isset($_GET['ajax'])) {
             color: #FF3737;
             border-radius: 14px;
             border: #DE6F6F 3px solid;
+            transition: 0.3s;
+        }
+
+        .skipWord:hover {
+            color: #D12727;
+            background-color: #FFA5A5;
         }
 
         .startTimer {
@@ -157,6 +174,12 @@ if (isset($_GET['ajax'])) {
             color: #1043A5;
             border-radius: 14px;
             border: #337DD2 3px solid;
+            transition: 0.3s;
+        }
+
+        .startTimer:hover {
+            color: #002E87;
+            background-color: #6297FF;
         }
 
         .wordsOps {
@@ -197,9 +220,11 @@ if (isset($_GET['ajax'])) {
     const backBtn = document.getElementById('game__backBtn');
 
     backBtn.addEventListener('click', () => {
-        document.location = './getTopics.php';
-        <?php session_destroy(); ?>
-    })
+        fetch('destroy_session.php')
+            .then(() => {
+                document.location = './getTopics.php';
+            });
+    });
 
     function getNextWord(skip = false) {
         let url = 'game.php?topic=<?php echo urlencode($topic); ?>&ajax=true'
@@ -209,7 +234,12 @@ if (isset($_GET['ajax'])) {
         fetch(url)
             .then(response => response.text())
             .then(word => {
-                document.getElementById('currentWord').innerText = word;
+                if (word === 'Все слова угаданы!') {
+                    alert(word);
+                    document.location = './getTopics.php';
+                } else {
+                    document.getElementById('currentWord').innerText = word;
+                }
             });
     }
 </script>

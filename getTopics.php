@@ -70,6 +70,7 @@ $result = $db->query('SELECT topic, image_path FROM topics');
             font-family: Montserrat-Medium;
             font-size: 34px;
             color: #FFFFFF;
+            transition: 0.3s;
         }
 
         .topics__backBtn {
@@ -83,6 +84,11 @@ $result = $db->query('SELECT topic, image_path FROM topics');
             color: #FFFFFF;
             background-color: #00336D;
             border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .topics__backBtn:hover {
+            background-color: #2E629E;
         }
     </style>
 </head>
@@ -96,7 +102,7 @@ $result = $db->query('SELECT topic, image_path FROM topics');
             $row['image_path'] = 'img/cats.png';
         }
         echo htmlspecialchars($row['image_path']); ?>')"
-        <span style="z-index: 2;"><?php echo htmlspecialchars($row['topic']); ?></span>
+        <span class="topic__span" style="z-index: 2;"><?php echo htmlspecialchars($row['topic']); ?></span>
         </button>
     <?php endwhile; ?>
     </div>

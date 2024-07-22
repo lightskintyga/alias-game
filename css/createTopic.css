@@ -88,6 +88,11 @@ body {
 
 input[type="submit"] {
     background-color: #F79810;
+    transition: 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #EA8111;
 }
 
 .submit {
@@ -117,4 +122,10 @@ input[type="submit"] {
     color: #F79810;
     border: 5px solid #F79810;
     border-radius: 12px;
+    transition: 0.3s;
+}
+
+.creator__backBtn:hover {
+    color: #FFFFFF;
+    background-color: #F79810;
 }

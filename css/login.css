@@ -96,6 +96,12 @@ body {
     color: #F79810;
     border: 5px solid #F79810;
     border-radius: 12px;
+    transition: 0.3s;
+}
+
+.login__menuBtn:hover {
+    color: #FFFFFF;
+    background-color: #F79810;
 }
 
 .login__info {
@@ -111,4 +117,9 @@ body {
     background-color: #00336D;
     border-radius: 12px;
     align-self: center;
+    transition: 0.3s;
+}
+
+.login__btn:hover {
+    background-color: #2E629E;
 }

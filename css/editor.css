@@ -52,6 +52,12 @@ body {
     color: #F79810;
     border: 5px solid #F79810;
     border-radius: 12px;
+    transition: 0.3s ;
+}
+
+.menu__BackBtn:hover {
+    color: #FFFFFF;
+    background-color: #F79810;
 }
 
 .menu__variants {
@@ -71,6 +77,11 @@ body {
     border-radius: 14px;
     color: #FFFFFF;
     text-align: left;
+    transition: 0.3s;
+}
+
+.menu__variants-editBtn:hover {
+    background-color: #419DE0;
 }
 
 .menu__variants-createBtn {
@@ -85,6 +96,11 @@ body {
     border-radius: 14px;
     color: #FFFFFF;
     text-align: left;
+    transition: 0.3s;
+}
+
+.menu__variants-createBtn:hover {
+    background-color: #419DE0;
 }
 
 .editBtn_text {

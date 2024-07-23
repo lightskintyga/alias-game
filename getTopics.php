@@ -1,5 +1,10 @@
 <?php
-$db = new SQLite3('db/main.db');
+$db = new mysqli('localhost', 'teacher', 'real_teacher', 'main');
+
+if ($db->connect_error) {
+    die('Ошибка подключения: ' . $db->connect_error);
+}
+
 $result = $db->query('SELECT topic, image_path FROM topics');
 ?>
 <html lang="ru">
@@ -90,6 +95,12 @@ $result = $db->query('SELECT topic, image_path FROM topics');
         .topics__backBtn:hover {
             background-color: #2E629E;
         }
+
+        @media screen and (max-width: 500px) {
+            .topic {
+                background-color: red;
+            }
+        }
     </style>
 </head>
 <body>
@@ -97,7 +108,7 @@ $result = $db->query('SELECT topic, image_path FROM topics');
     <button class="topics__backBtn" id="topics__backBtn">Вернуться назад</button>
     <h3 class="topics__header">Выберите тему</h3>
     <div class="topics__row">
-    <?php while ($row = $result->fetchArray(SQLITE3_ASSOC)): ?>
+    <?php while ($row = mysqli_fetch_array($result)): ?>
         <button class="topic" onclick="startGame('<?php echo htmlspecialchars($row['topic']); ?>')" style="background-image: url('<?php if (empty($row['image_path'])) {
             $row['image_path'] = 'img/cats.png';
         }

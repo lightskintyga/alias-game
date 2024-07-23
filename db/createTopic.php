@@ -3,22 +3,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $topic = $_POST['topic'];
     $words = $_POST['words'];
 
-    $db = new SQLite3('main.db');
+    $db = new mysqli('localhost', 'teacher', 'real_teacher', 'main');
 
-    $stmt = $db->prepare("INSERT INTO topics (topic) VALUES (:topic)");
-    $stmt->bindValue(':topic', $topic);
+    if ($db->connect_error) {
+        die('Ошибка подключения: ' . $db->connect_error);
+    }
+
+    $stmt = $db->prepare("INSERT INTO topics (topic) VALUES (?)");
+    $stmt->bind_param('s', $topic);
     $stmt->execute();
 
     $wordsArray = explode("\n", $words);
     foreach ($wordsArray as $word) {
         $word = trim($word);
         if (!empty($word)) {
-            $stmt = $db->prepare("INSERT INTO words (word, topic) VALUES (:word, :topic)");
-            $stmt->bindValue(':word', $word);
-            $stmt->bindValue(':topic', $topic);
+            $stmt = $db->prepare("INSERT INTO words (word, topic) VALUES (?, ?)");
+            $stmt->bind_param('ss', $word, $topic);
             $stmt->execute();
         }
     }
+    $stmt->close();
+    $db->close();
+
     header("Location: ../createTopic.html");
     exit();
 }

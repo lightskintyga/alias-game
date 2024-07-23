@@ -94,3 +94,23 @@ body {
     font-size: 40px;
     padding-top: 60px;
 }
+
+@media screen and (max-width: 500px) {
+    .menu__header {
+        font-size: 32px;
+    }
+
+    .menu__settingsBtn {
+        display: none;
+    }
+
+    .menu__playBtn {
+        width: 150px;
+        height: 42px;
+        font-size: 22px;
+    }
+
+    .menu {
+        background-image: url("../img/background-figures-mobile.png");
+    }
+}

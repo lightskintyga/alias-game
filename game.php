@@ -1,6 +1,11 @@
 <?php
 session_start();
-$db = new SQLite3('db/main.db');
+$db = new mysqli('localhost', 'teacher', 'real_teacher', 'main');
+
+if ($db->connect_error) {
+    die('Ошибка подключения: ' . $db->connect_error);
+}
+
 $topic = $_GET['topic'];
 
 if (!isset($_SESSION['used_words'])) {
@@ -23,15 +28,16 @@ function getRandomWord($db, $topic) {
     $used_words = $_SESSION['used_words'];
     $skipped_words = array_column($_SESSION['skipped_words'], 'word');
     $placeholders = implode(',', array_fill(0, count($used_words) + count($skipped_words), '?'));
-    $query = 'SELECT word FROM words WHERE topic = ? AND word NOT IN (' . $placeholders . ') ORDER BY RANDOM() LIMIT 1';
+    $query = 'SELECT word FROM words WHERE topic = ? AND word NOT IN (' . $placeholders . ') ORDER BY RAND() LIMIT 1';
     $stmt = $db->prepare($query);
-    $stmt->bindValue(1, $topic, SQLITE3_TEXT);
-    $index = 2;
-    foreach (array_merge($used_words, $skipped_words) as $word) {
-        $stmt->bindValue($index++, $word, SQLITE3_TEXT);
-    }
-    $result = $stmt->execute();
-    $row = $result->fetchArray(SQLITE3_ASSOC);
+    $params = array_merge([$topic], $used_words, $skipped_words);
+    $types = str_repeat('s', count($params));
+
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
     return $row ? $row['word'] : false;
 }
 
@@ -61,6 +67,8 @@ if (isset($_GET['ajax'])) {
     echo htmlspecialchars($_SESSION['current_word']);
     exit;
 }
+
+$db->close();
 ?>
 <html lang="ru">
 <head>
@@ -199,6 +207,53 @@ if (isset($_GET['ajax'])) {
             font-family: Montserrat-ExtraBold;
             font-size: 68px;
             color: #00336D;
+        }
+
+        @media screen and (max-width: 500px) {
+            .randomWord {
+                width: 316px;
+                height: 222px;
+            }
+
+            .word {
+                font-size: 24px;
+            }
+
+            .game {
+                align-items: center;
+                padding-top: 90px;
+            }
+
+            .game__backBtn {
+                width: 162px;
+                height: 36px;
+                font-size: 12px;
+                right: 22px;
+                top: 35px;
+            }
+
+            .nextWord {
+                width: 147px;
+                height: 45px;
+                font-size: 14px;
+            }
+
+            .skipWord {
+                width: 155px;
+                height: 45px;
+                font-size: 14px;
+            }
+
+            .startTimer {
+                width: 246px;
+                height: 45px;
+                font-size: 14px;
+            }
+
+            .wordsOps {
+                column-gap: 14px;
+                padding-bottom: 30px;
+            }
         }
     </style>
 </head>

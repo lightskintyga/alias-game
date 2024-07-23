@@ -1,27 +1,35 @@
 <?php
-$db = new SQLite3('main.db');
+$db = new mysqli('localhost', 'teacher', 'real_teacher', 'main');
+
+if ($db->connect_error) {
+    die('Ошибка подключения: ' . $db->connect_error);
+}
 
 $result = $db->query('SELECT topic FROM topics');
 $topics = [];
 
-while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+while ($row = $result->fetch_assoc()) {
     $topics[] = $row['topic'];
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selected_topic = $_POST['topic'];
 
-    $stmt = $db->prepare('SELECT word FROM words WHERE topic = :topic');
-    $stmt->bindValue(':topic', $selected_topic);
-    $result = $stmt->execute();
+    $stmt = $db->prepare('SELECT word FROM words WHERE topic = ?');
+    $stmt->bind_param('s', $selected_topic);
+    $stmt->execute();
+    $result = $stmt->get_result();
     $words = [];
-    while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+    while ($row = $result->fetch_assoc()) {
         $words[] = $row['word'];
     }
+    $stmt->close();
 } else {
     $selected_topic = '';
     $words = [];
 }
+
+$db->close();
 ?>
 
 <html lang="ru">

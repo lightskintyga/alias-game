@@ -1,5 +1,5 @@
 <?php
-$db = new mysqli('localhost', 'teacher', 'real_teacher', 'main');
+$db = new mysqli('localhost', 'teacher', 'real_teacher', 'alias');
 
 if ($db->connect_error) {
     die('Ошибка подключения: ' . $db->connect_error);

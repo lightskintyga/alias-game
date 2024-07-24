@@ -1,5 +1,5 @@
 <?php
-$db = new mysqli('localhost', 'teacher', 'real_teacher', 'main');
+$db = new mysqli('localhost', 'teacher', 'real_teacher', 'alias');
 
 if ($db->connect_error) {
     die('Ошибка подключения: ' . $db->connect_error);
@@ -177,6 +177,52 @@ $db->close();
         .topics__deleteBtn:hover {
             background-color: #CF4B4B;
         }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+        }
+
+        .modal {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            position: fixed;
+            width: 752px;
+            height: 364px;
+            z-index: 4;
+            background-color: #FFFFFF;
+            border-radius: 12px;
+        }
+
+        .modal__msg {
+            font-family: Montserrat-ExtraBold;
+            font-size: 32px;
+            width: 408px;
+            text-align: center;
+        }
+
+        .modal__closeBtn {
+            width: 165px;
+            height: 60px;
+            background-color: #F79810;
+            font-family: Montserrat-ExtraBold;
+            font-size: 32px;
+            color: #FFFFFF;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .modal__closeBtn:hover {
+            background-color: #EA8111;
+        }
     </style>
 </head>
 <body>
@@ -201,7 +247,7 @@ $db->close();
             <form id="saveForm">
                 <input type="hidden" name="topic" value="<?= htmlspecialchars($selected_topic) ?>">
                 <textarea name="words" id="words" class="words__textarea" oninput="handleInput()" onfocus="handleInput()"><?= htmlspecialchars(implode("\n", $words)) ?></textarea>
-                <button type="submit" class="topics__saveBtn" id="topics__saveBtn" disabled onclick="saveWords()">Сохранить</button>
+                <button type="button" class="topics__saveBtn" id="topics__saveBtn" disabled onclick="saveWords()">Сохранить</button>
             </form>
             <button class="topics__deleteBtn" id="deleteButton" onclick="deleteTopic()">Удалить тему</button>
         <?php
@@ -210,8 +256,24 @@ $db->close();
     </div>
     <button class="topics__backBtn" id="topics__backBtn">Вернуться назад</button>
 </div>
+<div class="overlay" id="overlay"></div>
+<div class="modal" id="modal__saveChanges">
+    <p class="modal__msg">Изменения выполнены успешно!</p>
+    <button class="modal__closeBtn" id="modal__closeSaveChangesBtn">Ок</button>
+</div>
+<div class="modal" id="modal__deleteTopic">
+    <p class="modal__msg">Тема успешно удалена!</p>
+    <button class="modal__closeBtn" id="modal__closeDeleteTopicBtn">Ок</button>
+</div>
 <script>
     const backBtn = document.getElementById('topics__backBtn');
+    const saveBtn = document.getElementById('topics__saveBtn');
+    const deleteTopicBtn = document.getElementById('deleteButton');
+    const closeSaveChangesBtn = document.getElementById('modal__closeSaveChangesBtn');
+    const closeDeleteTopicBtn = document.getElementById('modal__closeDeleteTopicBtn');
+    const overlay = document.getElementById('overlay');
+    const modalDeleteTopic = document.getElementById('modal__deleteTopic');
+    const modalSaveChanges = document.getElementById('modal__saveChanges');
 
     backBtn.addEventListener('click', () => {
         document.location = '../editor.html';
@@ -253,7 +315,7 @@ $db->close();
         })
             .then(response => response.text())
             .then(data => {
-                alert('Изменения выполнены успешно!');
+                console.log('Изменения выполнены успешно!');
             })
             .catch(error => {
                 console.error('Error: ', error);
@@ -270,13 +332,29 @@ $db->close();
         })
             .then(response => response.text())
             .then(data => {
-                alert('Тема успешно удалена!');
-                document.location = 'editTopic.php';
+                console.log('Тема успешно удалена!');
             })
             .catch(error => {
                 console.error('Error: ', error);
             })
     }
+
+    deleteTopicBtn.addEventListener('click', () => {
+        overlay.style.display = 'block';
+        modalDeleteTopic.style.display = 'flex';
+    })
+
+    closeDeleteTopicBtn.addEventListener('click', () => {
+        window.location = 'editTopic.php';
+    })
+
+    saveBtn.addEventListener('click', () => {
+        overlay.style.display = 'block';
+        modalSaveChanges.style.display = 'flex';
+    })
+    closeSaveChangesBtn.addEventListener('click', () => {
+        window.location = 'editTopic.php';
+    })
 </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-$db = new mysqli('localhost', 'teacher', 'real_teacher', 'main');
+$db = new mysqli('localhost', 'teacher', 'real_teacher', 'alias');
 
 if ($db->connect_error) {
     die('Ошибка подключения: ' . $db->connect_error);
@@ -255,6 +255,52 @@ $db->close();
                 padding-bottom: 30px;
             }
         }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+        }
+
+        .modal {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            position: fixed;
+            width: 752px;
+            height: 364px;
+            z-index: 4;
+            background-color: #FFFFFF;
+            border-radius: 12px;
+        }
+
+        .modal__msg {
+            font-family: Montserrat-ExtraBold;
+            font-size: 32px;
+            width: 408px;
+            text-align: center;
+        }
+
+        .modal__closeBtn {
+            width: 165px;
+            height: 60px;
+            background-color: #F79810;
+            font-family: Montserrat-ExtraBold;
+            font-size: 32px;
+            color: #FFFFFF;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .modal__closeBtn:hover {
+            background-color: #EA8111;
+        }
     </style>
 </head>
 <body>
@@ -271,8 +317,16 @@ $db->close();
         <button class="startTimer">Запустить таймер</button>
     </div>
 </div>
+<div class="overlay" id="overlay"></div>
+<div class="modal" id="modal">
+    <p class="modal__msg">Все слова использованы!</p>
+    <button class="modal__closeBtn" id="modal__closeBtn">Ок</button>
+</div>
 <script>
     const backBtn = document.getElementById('game__backBtn');
+    const closeBtn = document.getElementById('modal__closeBtn');
+    const overlay = document.getElementById('overlay');
+    const modal = document.getElementById('modal');
 
     backBtn.addEventListener('click', () => {
         fetch('destroy_session.php')
@@ -290,13 +344,22 @@ $db->close();
             .then(response => response.text())
             .then(word => {
                 if (word === 'Все слова угаданы!') {
-                    alert(word);
-                    document.location = './getTopics.php';
+                    console.log(word);
+                    showModal();
                 } else {
                     document.getElementById('currentWord').innerText = word;
                 }
             });
     }
+
+    function showModal() {
+        overlay.style.display = 'block';
+        modal.style.display = 'flex';
+    }
+
+    closeBtn.addEventListener('click', () => {
+        window.location = './getTopics.php';
+    })
 </script>
 </body>
 </html>

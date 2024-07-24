@@ -1,5 +1,5 @@
 <?php
-$db = new mysqli('localhost', 'teacher', 'real_teacher', 'main');
+$db = new mysqli('localhost', 'teacher', 'real_teacher', 'alias');
 
 if ($db->connect_error) {
     die('Ошибка подключения: ' . $db->connect_error);
@@ -20,9 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
     }
 
-    $stmt->close();
-
     echo 'Слова успешно сохранены';
+
+    $stmt->close();
 }
 
 $db->close();

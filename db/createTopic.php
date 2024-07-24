@@ -3,7 +3,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $topic = $_POST['topic'];
     $words = $_POST['words'];
 
-    $db = new mysqli('localhost', 'teacher', 'real_teacher', 'main');
+    $db = new mysqli('localhost', 'teacher', 'real_teacher', 'alias');
 
     if ($db->connect_error) {
         die('Ошибка подключения: ' . $db->connect_error);
@@ -25,6 +25,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
     $db->close();
 
-    header("Location: ../createTopic.html");
     exit();
 }

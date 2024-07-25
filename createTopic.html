@@ -12,7 +12,7 @@
 <div class="creator">
     <h3 class="creator__header">Создание темы</h3>
     <button class="creator__backBtn" id="creator__backBtn">Вернуться назад</button>
-    <form class="creator__form" id="creator__form">
+    <form class="creator__form" id="creator__form" enctype="multipart/form-data">
         <div class="topicTitle">
             <label for="topic" class="topicTitle__label">Название темы:</label>
             <input type="text" name="topic" id="topic" required>
@@ -22,8 +22,12 @@
             <textarea name="words" id="words" required></textarea>
         </div>
         <div class="icon">
-            <label for="icon__input" class="icon__label">Иконка:</label>
-            <input type="file" id="icon__input">
+            <p class="icon__info">Иконка:</p>
+            <label for="icon__input" class="icon__label"></label>
+            <input type="file"  id="icon__input" accept=".jpg, .png, .jpeg">
+            <button class="tooltip" id="tooltip" type="button"></button>
+            <span class="tooltip__info" id="tooltip__info">Формат: <b>JPG</b>, <b>JPEG</b>, <b>PNG</b>.<br>Только <b>горизонтальные</b> изображения.<br>Рекомендованы изображения в <b>темных</b> оттенках.</span>
+            <span id="fileName"></span>
         </div>
         <div class="submit">
             <button type="submit" class="creator__saveBtn" id="creator__saveBtn" disabled>Сохранить</button>

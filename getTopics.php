@@ -10,6 +10,9 @@ $result = $db->query('SELECT topic, image_path FROM topics');
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Выбор темы</title>
     <style>
         @import "css/reset.css";
@@ -97,8 +100,29 @@ $result = $db->query('SELECT topic, image_path FROM topics');
         }
 
         @media screen and (max-width: 500px) {
+            .topics__backBtn {
+                display: none;
+            }
+
             .topic {
-                background-color: red;
+                background-image: unset !important;
+                background-color: #65B2E9;
+                width: 238px;
+                height: 40px;
+                color: #000000;
+                font-family: Montserrat-SemiBold;
+                font-size: 16px;
+                touch-action: manipulation;
+            }
+
+            .topics__row {
+                row-gap: 17px;
+            }
+
+            .topics__header {
+                font-size: 24px;
+                padding-top: 47px;
+                padding-bottom: 77px;
             }
         }
     </style>

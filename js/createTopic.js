@@ -5,6 +5,10 @@ const topic = document.getElementById('topic');
 const words = document.getElementById('words');
 const modal = document.getElementById('modal');
 const overlay = document.getElementById('overlay');
+const fileInput = document.getElementById('icon__input');
+const fileNameSpan = document.getElementById('fileName');
+const tooltipBtn = document.getElementById('tooltip');
+const tooltip = document.getElementById('tooltip__info');
 
 function handleInput() {
     if (topic.value.trim() !== topic.defaultValue.trim() && words.value.trim() !== topic.defaultValue.trim()) {
@@ -34,17 +38,41 @@ document.getElementById('creator__form').addEventListener('submit', function(eve
 
     const topic = document.getElementById('topic').value;
     const words = document.getElementById('words').value;
+    const fileInput = document.getElementById('icon__input');
+    const file = fileInput.files[0];
+
+    if (file) {
+        const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+        if (!allowedExtensions.exec(file.name)) {
+            return;
+        }
+    }
+
+    const formData = new FormData();
+    formData.append('topic', topic);
+    formData.append('words', words);
+    if (file) {
+        formData.append('icon', file);
+    }
 
     const xhr = new XMLHttpRequest();
     xhr.open('POST', 'db/createTopic.php', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4 && xhr.status === 200) {
             console.log('Тема успешно добавлена!');
         }
     }
-    xhr.send('topic=' + encodeURIComponent(topic) + '&words=' + encodeURIComponent(words));
+    xhr.send(formData);
 });
+
+fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (file) {
+        fileNameSpan.textContent = `Выбран файл: ${file.name}`;
+    } else {
+        fileNameSpan.textContent = '';
+    }
+})
 
 saveBtn.addEventListener('click', () => {
     overlay.style.display = 'block';
@@ -53,4 +81,12 @@ saveBtn.addEventListener('click', () => {
 
 closeBtn.addEventListener('click', () => {
     location.reload();
+})
+
+tooltipBtn.addEventListener('mouseover', () => {
+    tooltip.style.display = 'block';
+})
+
+tooltipBtn.addEventListener('mouseout', () => {
+    tooltip.style.display = 'none';
 })

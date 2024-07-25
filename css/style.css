@@ -98,6 +98,8 @@ body {
 @media screen and (max-width: 500px) {
     .menu__header {
         font-size: 32px;
+        padding-top: 80px;
+        padding-bottom: 181px;
     }
 
     .menu__settingsBtn {
@@ -112,5 +114,6 @@ body {
 
     .menu {
         background-image: url("../img/background-figures-mobile.png");
+        height: 500px !important;
     }
 }

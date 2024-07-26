@@ -1,68 +1,104 @@
 <?php
+// Запуск сессии
 session_start();
+
+// Подключение к бд
 $db = new mysqli('localhost', 'teacher', 'real_teacher', 'alias');
 
+// Проверка подключения
 if ($db->connect_error) {
     die('Ошибка подключения: ' . $db->connect_error);
 }
 
+// Получение названия темы
 $topic = $_GET['topic'];
 
+// Инициализация в сессии массива для угаданных слов
 if (!isset($_SESSION['used_words'])) {
     $_SESSION['used_words'] = [];
 }
 
+// Инициализация в сессии массива для пропущенных слов
 if (!isset($_SESSION['skipped_words'])) {
     $_SESSION['skipped_words'] = [];
 }
 
+// Инициализация в сессии счетчика
 if (!isset($_SESSION['counter'])) {
     $_SESSION['counter'] = 0;
 }
 
+// Инициализация в сессии текущего слова
 if (!isset($_SESSION['current_word'])) {
     $_SESSION['current_word'] = '';
 }
 
+// Алгоритм выдачи случайного слова из бд
 function getRandomWord($db, $topic) {
+    // Получение массива использованных слов из сессии
     $used_words = $_SESSION['used_words'];
+
+    // Получение массива пропущенных слов из сессии (извлекаем только сами слова)
     $skipped_words = array_column($_SESSION['skipped_words'], 'word');
+
+    // Создание строки из вопросительных знаков для использования в запросе SQL
+    // Количество знаков определяется количеством использованных и пропущенных слов
     $placeholders = implode(',', array_fill(0, count($used_words) + count($skipped_words), '?'));
+
+    // Формирование запроса SQL с учетом темы и исключением использованных и пропущенных слов
     $query = 'SELECT word FROM words WHERE topic = ? AND word NOT IN (' . $placeholders . ') ORDER BY RAND() LIMIT 1';
+
+    // Подготовка SQL-запроса к выполнению
     $stmt = $db->prepare($query);
+
+    // Объединение параметров для запроса (тема, использованные и пропущенные слова)
     $params = array_merge([$topic], $used_words, $skipped_words);
+
+    // Определение типов параметров для bind_param (все параметры строковые)
     $types = str_repeat('s', count($params));
 
+    // Привязывание параметров к подготовленному запросу
     $stmt->bind_param($types, ...$params);
+
+    // Выполнение запроса
     $stmt->execute();
+
+    // Получение результата запроса
     $result = $stmt->get_result();
+
+    // Извлечение первой строки результата в виде ассоциативного массива
     $row = $result->fetch_assoc();
 
+    // Возвращение слова, если оно найдено, иначе false
     return $row ? $row['word'] : false;
 }
 
 $_SESSION['counter']++;
+// Алгоритм удаления слова из списка пропущенных в общую раздачу спустя 5-10 угаданных слов
 foreach ($_SESSION['skipped_words'] as $key => $skipped_word) {
     if ($_SESSION['counter'] - $skipped_word['turn'] >= rand(5, 10)) {
         unset($_SESSION['skipped_words'][$key]);
     }
 }
 
+// Если слово пропущено, то оно добавляется в массив пропущенных слов
 if (isset($_GET['skip']) && $_GET['skip'] == 'true') {
     $_SESSION['skipped_words'][] = ['word' => $_SESSION['current_word'], 'turn' => $_SESSION['counter']];
-} else {
+} else { // Если слово угадано, то оно добавляется в массив использованных (угаданных) слов
     $_SESSION['used_words'][] = $_SESSION['current_word'];
 }
 
+// Получение случайного слова из бд
 $randomWord = getRandomWord($db, $topic);
 if ($randomWord) {
     $_SESSION['current_word'] = $randomWord;
-} else {
+} else { // Если слова в выдаче закончились, то сессия уничтожается
     echo 'Все слова угаданы!';
     session_destroy();
     exit;
 }
 
+// Используется для ajax-запроса
 if (isset($_GET['ajax'])) {
     echo htmlspecialchars($_SESSION['current_word']);
     exit;
@@ -537,6 +573,7 @@ $db->close();
     let totalSeconds = 60;
     let guessedWords = 0;
 
+    // Переход к странице со всеми темами
     backBtn.addEventListener('click', () => {
         fetch('destroy_session.php')
             .then(() => {
@@ -544,6 +581,7 @@ $db->close();
             });
     });
 
+    // Отображение следующего слова
     function getNextWord(skip = false) {
         let url = 'game.php?topic=<?php echo urlencode($topic); ?>&ajax=true'
         incrementScore(skip);
@@ -562,17 +600,20 @@ $db->close();
             });
     }
 
+    // Отображение модального окна
     function showModal() {
         overlay.style.display = 'block';
         modal.style.display = 'flex';
     }
 
+    // Обновление отображения таймера
     function updateTimerDisplay() {
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = totalSeconds % 60;
         timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
 
+    // Увеличение счетчика угаданных слов, если была нажата кнопка "следующее", а не "пропустить"
     function incrementScore(skip) {
         if (skip === false) {
             guessedWords++;
@@ -582,48 +623,63 @@ $db->close();
         }
     }
 
+    // Запуск таймера
     startTimer.addEventListener('click', () => {
+        // Убираем кнопки запуска таймера и его настроек, отображаем сам таймер
         startTimer.style.display = 'none';
         timerSettingsBtn.style.display = 'none';
         timerDisplay.style.display = 'unset';
 
-
+        // Очищение любого ранее запущенного интервала, чтобы избежать наложения таймеров
         clearInterval(countdown);
 
+        // Получение значения секунд из пользовательского ввода
         const customSeconds = parseInt(customSecondsInput.value, 10);
+
+        // Если значение введено и оно положительное, устанавливаем его как общее количество секунд
         if (!isNaN(customSeconds) && customSeconds > 0) {
             totalSeconds = customSeconds;
         }
 
+        // Обновление отображения таймера на экране
         updateTimerDisplay();
 
+        // Установка нового интервала, который будет уменьшать общее количество секунд каждую секунду
         countdown = setInterval(() => {
             if (totalSeconds > 0) {
                 totalSeconds--;
+                // Обновление отображения таймера на экране каждую секунду
                 updateTimerDisplay();
             } else {
+                // Остановка таймера, когда он достигнет нуля
                 clearInterval(countdown);
+                // Возвращение кнопок запуска и настроек таймера, скрываем сам таймер
                 startTimer.style.display = 'unset';
                 timerSettingsBtn.style.display = 'unset';
                 timerDisplay.style.display = 'none';
+                // Отображение модального окна, информирующего пользователя о завершении таймера
                 overlay.style.display = 'block';
                 modalTimer.style.display = 'flex';
             }
-        }, 1000);
+        }, 1000); // Интервал в 1 секунду
     })
 
+    // Переход к странице со всеми темами
     closeBtn.addEventListener('click', () => {
         window.location = './getTopics.php';
     })
 
+    // Отображение настроек таймера
     timerSettingsBtn.addEventListener('click', () => {
         timerSettings.style.display = 'flex';
     })
 
+    // Закрытие окна с настройками таймера
     timerSettingsSaveBtn.addEventListener('click', () => {
         timerSettings.style.display = 'none';
     })
 
+    // Закрытие модального окна
     closeTimerBtn.addEventListener('click', () => {
         overlay.style.display = 'none';
         modalTimer.style.display = 'none';

@@ -1,10 +1,13 @@
 <?php
+// Подключение к бд
 $db = new mysqli('localhost', 'teacher', 'real_teacher', 'alias');
 
+// Проверка подключения к бд
 if ($db->connect_error) {
     die('Ошибка подключения: ' . $db->connect_error);
 }
 
+// Получение тем из бд
 $result = $db->query('SELECT topic, image_path FROM topics');
 ?>
 <html lang="ru">
@@ -132,7 +135,9 @@ $result = $db->query('SELECT topic, image_path FROM topics');
     <button class="topics__backBtn" id="topics__backBtn">Вернуться назад</button>
     <h3 class="topics__header">Выберите тему</h3>
     <div class="topics__row">
+        <!-- Отображение тем с фоновыми изображениями -->
     <?php while ($row = mysqli_fetch_array($result)): ?>
+    <!-- Если отсутствует собственное загруженное изображение, то фоновым изображением будет файл cats.png -->
         <button class="topic" onclick="startGame('<?php echo htmlspecialchars($row['topic']); ?>')" style="background-image: url('<?php if (empty($row['image_path'])) {
             $row['image_path'] = 'img/cats.png';
         }
@@ -146,10 +151,12 @@ $result = $db->query('SELECT topic, image_path FROM topics');
     const topicsBlock = document.getElementById('topics');
     const backBtn = document.getElementById('topics__backBtn');
 
+    // Старт игры
     function startGame(topic) {
         window.location.href = 'game.php?topic=' + encodeURIComponent(topic);
     }
 
+    // Переход к стартовой странице игры
     backBtn.addEventListener('click', () => {
         document.location = 'index.html';
     })

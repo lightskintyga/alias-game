@@ -1,34 +1,44 @@
 <?php
+// Подключение к бд
 $db = new mysqli('localhost', 'teacher', 'real_teacher', 'alias');
 
+// Проверка подключения
 if ($db->connect_error) {
     die('Ошибка подключения: ' . $db->connect_error);
 }
 
+// Получение всех тем
 $result = $db->query('SELECT topic FROM topics');
 $topics = [];
 
+// Добавление каждой темы в массив
 while ($row = $result->fetch_assoc()) {
     $topics[] = $row['topic'];
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Получение названия выбранной темы для редактирования
     $selected_topic = $_POST['topic'];
 
+    // Получение слов из выбранной темы
     $stmt = $db->prepare('SELECT word FROM words WHERE topic = ?');
     $stmt->bind_param('s', $selected_topic);
     $stmt->execute();
     $result = $stmt->get_result();
+
+    // Создание массива со словами
     $words = [];
     while ($row = $result->fetch_assoc()) {
         $words[] = $row['word'];
     }
+    // Закрытие подключения
     $stmt->close();
-} else {
+} else { // Очистка данных
     $selected_topic = '';
     $words = [];
 }
 
+// Закрытие подключения
 $db->close();
 ?>
 
@@ -235,6 +245,7 @@ $db->close();
                 <?php
                 foreach ($topics as $topic):
                     ?>
+                    <!-- Каждая тема - отдельная опция в меню -->
                     <option value="<?= htmlspecialchars($topic) ?>" <?= $selected_topic === $topic ? 'selected' : '' ?>><?= htmlspecialchars($topic) ?></option>
                 <?php
                 endforeach;
@@ -242,10 +253,11 @@ $db->close();
             </select>
         </form>
         <?php
-        if ($selected_topic):
+        if ($selected_topic): // Если была выбрана какая-то тема
             ?>
             <form id="saveForm">
                 <input type="hidden" name="topic" value="<?= htmlspecialchars($selected_topic) ?>">
+                <!-- Отображение слов из выбранной темы -->
                 <textarea name="words" id="words" class="words__textarea" oninput="handleInput()" onfocus="handleInput()"><?= htmlspecialchars(implode("\n", $words)) ?></textarea>
                 <button type="button" class="topics__saveBtn" id="topics__saveBtn" disabled onclick="saveWords()">Сохранить</button>
             </form>
@@ -275,15 +287,18 @@ $db->close();
     const modalDeleteTopic = document.getElementById('modal__deleteTopic');
     const modalSaveChanges = document.getElementById('modal__saveChanges');
 
+    // Переход к стартовой странице админки
     backBtn.addEventListener('click', () => {
         document.location = '../editor.html';
     })
 
+    // Автоматическое масштабирование текстового поля
     function autoResize(textarea) {
         textarea.style.height = 'auto';
         textarea.style.height = textarea.scrollHeight + 40 + 'px';
     }
 
+    // Проверка внесения изменений в текстовое поле
     function handleInput() {
         const textarea = document.getElementById('words');
         const saveBtn = document.getElementById('topics__saveBtn');
@@ -297,6 +312,7 @@ $db->close();
         }
     }
 
+    // Отслеживание поведения текстового поля
     document.addEventListener('DOMContentLoaded', () => {
         const textarea = document.getElementById('words');
         if (textarea) {
@@ -305,6 +321,7 @@ $db->close();
         }
     })
 
+    // Отправка post-запроса в файл save_words.php
     function saveWords() {
         const form = document.getElementById('saveForm');
         const formData = new FormData(form);
@@ -322,6 +339,7 @@ $db->close();
             })
     }
 
+    // Отправка post-запроса в файл delete_topic.php
     function deleteTopic() {
         const form = document.getElementById('saveForm');
         const formData = new FormData(form);
@@ -339,19 +357,24 @@ $db->close();
             })
     }
 
+    // Вывод модального окна об удалении темы
     deleteTopicBtn.addEventListener('click', () => {
         overlay.style.display = 'block';
         modalDeleteTopic.style.display = 'flex';
     })
 
+    // Перезагрузка страницы после закрытия модального окна
     closeDeleteTopicBtn.addEventListener('click', () => {
         window.location = 'editTopic.php';
     })
 
+    // Вывод модального окна о сохранении изменений в текстовом поле
     saveBtn.addEventListener('click', () => {
         overlay.style.display = 'block';
         modalSaveChanges.style.display = 'flex';
     })
+
+    // Перезагрузка страницы после закрытия модального окна
     closeSaveChangesBtn.addEventListener('click', () => {
         window.location = 'editTopic.php';
     })
